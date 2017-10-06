@@ -6,7 +6,10 @@ library(rjson)
 library(blsAPI)
 library(jsonlite)
 library(dplyr)
+library(readr)
 
+
+## GETTING UNEMPLOYMENT RATE DATA
 
 # Download monthly unemployment rate from BLS  
 payload <- list(
@@ -17,9 +20,41 @@ payload <- list(
 response<-blsAPI(payload)
 unempljson <- fromJSON(response,simplifyVector = TRUE)
 
-#transform json to dataframe
+#Transform json to dataframe
 unempldata <- unempljson['Results'] $Results$series$data
 unempldf <- do.call(rbind.data.frame, unempldata)
+
+#Merge year and month
+
+unempldf$time <- paste(unempldf$year,unempldf$period)
+
+#Remove columns in dataframe
+keeps <- c("time","value")
+unempldf = unempldf[keeps]
+
+#Order by ascending time
+
+unempldf <- unempldf[order(unempldf$time,decreasing=FALSE), ]
+
+# Create quarterly unemployment rate 
+
+monthly <- ts(unempldf,start=c(1990,1),frequency=12)
+unemplquarterly <- aggregate(monthly, nfrequency=4, mean)
+
+# Create change quarterly unemployment rate
+
+#PENDING!!!!
+
+
+
+## GETTING GDP GROWTH DATA
+
+#import GDP growth from csv file
+
+gdpchg <- read_delim("gdpchg.csv", ";", escape_double=FALSE, trim_ws=TRUE)
+colnames(gdpchg)<-c("time", "growth")
+
+
 
 
 
