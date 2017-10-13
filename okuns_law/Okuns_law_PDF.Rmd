@@ -5,8 +5,9 @@ date: "13 de octubre de 2017"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r  echo=FALSE}
+library(knitr)
+read_chunk('getting_data.R')
 ```
 
 # Introduction
@@ -19,6 +20,9 @@ We get unemployment API data from US Bureau of Labor Statistics and GDP growth d
 # Plotting the data
 In the following graph we plot the relationship between the two variables of interest.
 
-
-
+```{r}
+library(ggplot2)
+library(tibble)
+summary(wholedta)  
+```
 
