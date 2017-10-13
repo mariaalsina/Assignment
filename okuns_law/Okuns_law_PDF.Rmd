@@ -1,0 +1,24 @@
+---
+title: "Okuns Law - PDF"
+author: "Maria Alsina and Li Yang"
+date: "13 de octubre de 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+This project aims to replicate and analyze Okuns law. According to our always-reliable source called "Wikipedia", Okuns law is: "an empirically observed relationship between unemployment and losses in a country's production. The "gap version" states that for every 1% increase in the unemployment rate, a country's GDP will be roughly an additional 2% lower than its potential GDP. The "difference version" describes the relationship between quarterly changes in unemployment and quarterly changes in real GDP. The stability and usefulness of the law has been disputed."
+Our goal is to estimate if this relationship aplies for US data between 1990 and 1999.
+
+# Data
+We get unemployment API data from US Bureau of Labor Statistics and GDP growth data from US Buresu of Economic Analysis.We perform some minor modifications to the datasets, all of them being detailed in the R-file "getting_data.R".
+
+# Plotting the data
+In the following graph we plot the relationship between the two variables of interest.
+
+
+
+
