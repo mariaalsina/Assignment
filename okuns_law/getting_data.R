@@ -7,7 +7,10 @@ library(blsAPI)
 library(jsonlite)
 library(dplyr)
 library(readr)
+<<<<<<< HEAD
 
+=======
+>>>>>>> load_gdp_growth
 
 ## GETTING UNEMPLOYMENT RATE DATA
 
@@ -24,6 +27,7 @@ unempljson <- fromJSON(response,simplifyVector = TRUE)
 unempldata <- unempljson['Results'] $Results$series$data
 unempldf <- do.call(rbind.data.frame, unempldata)
 
+<<<<<<< HEAD
 #Merge year and month
 
 unempldf$time <- paste(unempldf$year,unempldf$period)
@@ -63,4 +67,47 @@ colnames(gdpchg)<-c("time", "growth")
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=======
+#import gdp growth from csv file
+gdpchg <- read_delim("gdpchg_90_99.csv", ";", escape_double = FALSE, trim_ws = TRUE)
+colnames(gdpchg) <- c("time", "growth")
+>>>>>>> load_gdp_growth
 
