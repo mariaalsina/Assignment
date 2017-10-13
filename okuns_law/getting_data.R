@@ -39,11 +39,13 @@ unempldf <- unempldf[order(unempldf$time,decreasing=FALSE), ]
 # Create quarterly unemployment rate 
 
 monthly <- ts(unempldf,start=c(1990,1),frequency=12)
-unemplquarterly <- aggregate(monthly, nfrequency=4, mean)
+unemplquarterly <- data.frame(aggregate(monthly, nfrequency=4, mean))
+
 
 # Create change quarterly unemployment rate
 
-#PENDING!!!!
+unemplchange<-data.frame(diff(unemplquarterly$value, lag=1))
+
 
 
 
@@ -51,8 +53,12 @@ unemplquarterly <- aggregate(monthly, nfrequency=4, mean)
 
 #import GDP growth from csv file
 
-gdpchg <- read_delim("gdpchg.csv", ";", escape_double=FALSE, trim_ws=TRUE)
+gdpchg <- read_delim("gdpchg_90_99.csv", ";", escape_double=FALSE, trim_ws=TRUE)
 colnames(gdpchg)<-c("time", "growth")
+
+#
+
+
 
 
 
