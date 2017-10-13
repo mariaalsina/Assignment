@@ -7,10 +7,7 @@ library(blsAPI)
 library(jsonlite)
 library(dplyr)
 library(readr)
-<<<<<<< HEAD
 
-=======
->>>>>>> load_gdp_growth
 
 ## GETTING UNEMPLOYMENT RATE DATA
 
@@ -27,7 +24,7 @@ unempljson <- fromJSON(response,simplifyVector = TRUE)
 unempldata <- unempljson['Results'] $Results$series$data
 unempldf <- do.call(rbind.data.frame, unempldata)
 
-<<<<<<< HEAD
+
 #Merge year and month
 
 unempldf$time <- paste(unempldf$year,unempldf$period)
@@ -48,7 +45,7 @@ unemplquarterly <- data.frame(aggregate(monthly, nfrequency=4, mean))
 
 # Create change quarterly unemployment rate
 
-unemplchange<-data.frame(diff(unemplquarterly$value, lag=1))
+unemplchg<-data.frame(diff(unemplquarterly$value, lag=1))
 
 
 
@@ -60,7 +57,14 @@ unemplchange<-data.frame(diff(unemplquarterly$value, lag=1))
 gdpchg <- read_delim("gdpchg_90_99.csv", ";", escape_double=FALSE, trim_ws=TRUE)
 colnames(gdpchg)<-c("time", "growth")
 
-#
+# Get rid of first row because it matches the unemployment data
+gdpchg = gdpchg[-1,]
+
+
+## MERGE THE TWO DATAFRAMES and RENAME VARIABLES
+
+wholedta <- data.frame(gdpchg, unemplchg)
+colnames(wholedta)<-c("time", "gdpchg", "unemplchg")
 
 
 
@@ -105,9 +109,6 @@ colnames(gdpchg)<-c("time", "growth")
 
 
 
-=======
-#import gdp growth from csv file
-gdpchg <- read_delim("gdpchg_90_99.csv", ";", escape_double = FALSE, trim_ws = TRUE)
-colnames(gdpchg) <- c("time", "growth")
->>>>>>> load_gdp_growth
+
+
 
