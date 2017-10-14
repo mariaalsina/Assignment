@@ -7,6 +7,7 @@ library(blsAPI)
 library(jsonlite)
 library(dplyr)
 library(readr)
+library(knitr)
 
 
 ## GETTING UNEMPLOYMENT RATE DATA
@@ -62,6 +63,7 @@ gdpchg = gdpchg[-1,]
 
 
 ## MERGE THE TWO DATAFRAMES and RENAME VARIABLES
+
 
 wholedta <- data.frame(gdpchg, unemplchg)
 colnames(wholedta)<-c("time", "gdpchg", "unemplchg")

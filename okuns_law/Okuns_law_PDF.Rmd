@@ -5,24 +5,54 @@ date: "13 de octubre de 2017"
 output: pdf_document
 ---
 
-```{r  echo=FALSE}
-library(knitr)
-read_chunk('getting_data.R')
+```{r setup, echo=FALSE, include=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+
+source('getting_data.R')
 ```
 
 # Introduction
-This project aims to replicate and analyze Okuns law. According to our always-reliable source called "Wikipedia", Okuns law is: "an empirically observed relationship between unemployment and losses in a country's production. The "gap version" states that for every 1% increase in the unemployment rate, a country's GDP will be roughly an additional 2% lower than its potential GDP. The "difference version" describes the relationship between quarterly changes in unemployment and quarterly changes in real GDP. The stability and usefulness of the law has been disputed."
-Our goal is to estimate if this relationship aplies for US data between 1990 and 1999.
+This project aims to analyse the validity of Okuns law (1962). According to our always-reliable source called "Wikipedia", Okuns law is: "an empirically observed relationship between unemployment and losses in a country's production. The "gap version" states that for every 1% increase in the unemployment rate, a country's GDP will be roughly an additional 2% lower than its potential GDP. The "difference version" describes the relationship between quarterly changes in unemployment and quarterly changes in real GDP. The stability and usefulness of the law has been disputed." 
+
+Our goal is to study the relationship between unemployment levels and GDP growth and see if the relationship Okuns law specifies aplies for US data between 1990 and 1999.
+
 
 # Data
-We get unemployment API data from US Bureau of Labor Statistics and GDP growth data from US Buresu of Economic Analysis.We perform some minor modifications to the datasets, all of them being detailed in the R-file "getting_data.R".
+We get unemployment API data from US Bureau of Labor Statistics and GDP growth data from US Buresu of Economic Analysis.We perform some modifications to the data, such as cleaning auxiliary variables, calculating quarterly averages, obtaining growth rates, etc. All of them are detailed in the R script "getting_data.R". We combine the two time series into a dataframe that we call "wholedata". The following lines display the first rows of this dataframe:
 
-# Plotting the data
+```{r, echo=FALSE}
+head(wholedta)
+```
+
+## Summary of our data
+The main summarizing elements of our dataframe are the following:
+```{r, echo=FALSE}
+summary(wholedta)
+```
+
+
+## Plotting the data
 In the following graph we plot the relationship between the two variables of interest.
 
-```{r}
+```{r, echo=FALSE, warning=FALSE}
 library(ggplot2)
 library(tibble)
-summary(wholedta)  
+ggplot(data=wholedta)+geom_point(mapping=aes(x=gdpchg, y=unemplchg, color=gdpchg))+
+  labs(title="Relation GDP change and Unemployment rate change",
+       x="GDP change",
+       y="Unemployment rate change",
+       color="GDP change")+
+  theme_classic()
 ```
+
+
+
+# Regression
+We proceed with the regression analysis. The goal is to obtain an estimate that tells the relationship between the two variables of interest from our dataset and compare it with the literature's Okuns law.
+In the regression framework of Okuns law, the unemployment gap is considered the dependent variable and the GDP growth the independent variable. We conduct the following OLS regression:
+$$\Delta U_t=\alpha + \beta \Delta Y_t + \epsilon_t$$
+
+```{r}
+
+```
+
 
