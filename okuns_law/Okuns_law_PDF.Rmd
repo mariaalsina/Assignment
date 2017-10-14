@@ -5,8 +5,8 @@ date: "13 de octubre de 2017"
 output: pdf_document
 ---
 
-```{r setup, echo=FALSE, include=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
-
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,warning = FALSE)  
 source('getting_data.R')
 ```
 
@@ -21,6 +21,7 @@ We get unemployment API data from US Bureau of Labor Statistics and GDP growth d
 
 ```{r, echo=FALSE}
 head(wholedta)
+knitr::kable(head(wholedta))
 ```
 
 ## Summary of our data
@@ -31,11 +32,30 @@ summary(wholedta)
 
 
 ## Plotting the data
-In the following graph we plot the relationship between the two variables of interest.
+In the following graph we plot  the two variables of interest and the relationship between them.
 
 ```{r, echo=FALSE, warning=FALSE}
 library(ggplot2)
 library(tibble)
+ggplot(data=wholedta)+geom_point(mapping=aes(x=time, y=unemplchg))+
+  labs(title="Evolution of unemployment rate",
+       x="time",
+       y="Unemployment rate change"
+       )+
+  theme_classic()
+```
+
+```{r, echo=FALSE, warning=FALSE}
+ggplot(data=wholedta)+geom_point(mapping=aes(x=time, y=gdpchg))+
+  labs(title="Evolution of GDP change",
+       x="time",
+       y="GDP change"
+       )+
+  theme_classic()
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
 ggplot(data=wholedta)+geom_point(mapping=aes(x=gdpchg, y=unemplchg, color=gdpchg))+
   labs(title="Relation GDP change and Unemployment rate change",
        x="GDP change",
@@ -51,8 +71,50 @@ We proceed with the regression analysis. The goal is to obtain an estimate that 
 In the regression framework of Okuns law, the unemployment gap is considered the dependent variable and the GDP growth the independent variable. We conduct the following OLS regression:
 $$\Delta U_t=\alpha + \beta \Delta Y_t + \epsilon_t$$
 
-```{r}
+```{r, echo=FALSE}
+library(sandwich) 
+library(lmtest)
 
+lm_okun= lm(unemlchg ~ 1+ gdpchg, data=wholedta)
+summary(lm_okun)
+
+lm_robust = coeftest(lm_okun, vcov = vcovHC(lm_okun, "HC1"))
+print(lm_robust)
 ```
 
+```{r}
+compute_rob_se = function(lmodel){
+  vcov = vcovHC(lmodel, "HC1")
+  se = sqrt(diag(vcov))
+}
 
+rob_se = compute_rob_se(lm_okun)
+print(rob_se)
+```
+
+```{r, results = "asis"}
+stargazer(lm_okun, lm_robust,  # put two times comapre normal and robust std error
+          type = "latex",
+          se = list(NULL, rob_se))   # for the second insert my error
+```
+
+##Plotting the results
+In the following graph, we include the linear regression into our plot,
+
+```{r, echo=FALSE, warning=FALSE}
+ggplot(data=wholedta)+geom_point(mapping=aes(x=gdpchg, y=unemplchg, color=gdpchg))+
+  labs(title="Relation GDP change and Unemployment rate change",
+       x="GDP change",
+       y="Unemployment rate change",
+       color="GDP change")+
+  theme_classic()+
+  geom_smooth(method='lm',formula=y~x)
+```
+
+##Conclusion 
+Our analysis suggests that the relationship bewteen the unemployment rate change and GDP growth rate for the US economy between 1990 and 1999 is negatively correlated. For 1% increase in the GDP growth, is correlated with a decrease of 4.8% unemployment rate change. Therefore Okuns law applies for the examined period. 
+
+##References
+[1]Programming Pratices for Research in Economics
+[2]Wikipedia
+[3]Google in genral
