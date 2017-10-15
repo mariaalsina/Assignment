@@ -1,7 +1,7 @@
 ---
-title: "Okuns Law - PDF"
+title: "Okuns Law"
 author: "Maria Alsina and Li Yang"
-date: "13 de octubre de 2017"
+date: "15.10.2017"
 output: pdf_document
 ---
 
@@ -10,6 +10,14 @@ knitr::opts_chunk$set(echo = FALSE,warning = FALSE)
 source('getting_data.R')
 ```
 
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)   #data manipulation 
+library(tibble)
+library(stargazer) #tables
+library(ggplot2)
+library(sandwich) 
+library(lmtest)
+```
 # Introduction
 This project aims to analyse the validity of Okuns law (1962). According to our always-reliable source called "Wikipedia", Okuns law is: "an empirically observed relationship between unemployment and losses in a country's production. The "gap version" states that for every 1% increase in the unemployment rate, a country's GDP will be roughly an additional 2% lower than its potential GDP. The "difference version" describes the relationship between quarterly changes in unemployment and quarterly changes in real GDP. The stability and usefulness of the law has been disputed." 
 
@@ -17,17 +25,16 @@ Our goal is to study the relationship between unemployment levels and GDP growth
 
 
 # Data
-We get unemployment API data from US Bureau of Labor Statistics and GDP growth data from US Buresu of Economic Analysis.We perform some modifications to the data, such as cleaning auxiliary variables, calculating quarterly averages, obtaining growth rates, etc. All of them are detailed in the R script "getting_data.R". We combine the two time series into a dataframe that we call "wholedata". The following lines display the first rows of this dataframe:
+We get unemployment API data from US Bureau of Labor Statistics and GDP growth data from US Bureau of Economic Analysis.We perform some modifications to the data, such as cleaning auxiliary variables, calculating quarterly averages, obtaining growth rates, etc. All of them are detailed in the R script "getting_data.R". We combine the two time series into a dataframe that we call "wholedata". The following lines display the first rows of this dataframe:
 
 ```{r, echo=FALSE}
-head(wholedta)
 knitr::kable(head(wholedta))
 ```
 
 ## Summary of our data
 The main summarizing elements of our dataframe are the following:
-```{r, echo=FALSE}
-summary(wholedta)
+```{r,results = "asis"}
+stargazer(wholedta,type="latex", header=FALSE)
 ```
 
 
@@ -35,14 +42,15 @@ summary(wholedta)
 In the following graph we plot  the two variables of interest and the relationship between them.
 
 ```{r, echo=FALSE, warning=FALSE}
-library(ggplot2)
-library(tibble)
 ggplot(data=wholedta)+geom_point(mapping=aes(x=time, y=unemplchg))+
   labs(title="Evolution of unemployment rate",
        x="time",
        y="Unemployment rate change"
        )+
-  theme_classic()
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5 , hjust = 1),
+        panel.background = element_rect(fill = 'transparent', colour = 'black'),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())
 ```
 
 ```{r, echo=FALSE, warning=FALSE}
@@ -51,7 +59,10 @@ ggplot(data=wholedta)+geom_point(mapping=aes(x=time, y=gdpchg))+
        x="time",
        y="GDP change"
        )+
-  theme_classic()
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5 , hjust = 1),
+        panel.background = element_rect(fill = 'transparent', colour = 'black'),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())
 ```
 
 
@@ -72,14 +83,8 @@ In the regression framework of Okuns law, the unemployment gap is considered the
 $$\Delta U_t=\alpha + \beta \Delta Y_t + \epsilon_t$$
 
 ```{r, echo=FALSE}
-library(sandwich) 
-library(lmtest)
-
-lm_okun= lm(unemlchg ~ 1+ gdpchg, data=wholedta)
-summary(lm_okun)
-
+lm_okun= lm(unemplchg ~ 1+ gdpchg, data=wholedta)
 lm_robust = coeftest(lm_okun, vcov = vcovHC(lm_okun, "HC1"))
-print(lm_robust)
 ```
 
 ```{r}
@@ -89,13 +94,13 @@ compute_rob_se = function(lmodel){
 }
 
 rob_se = compute_rob_se(lm_okun)
-print(rob_se)
 ```
 
 ```{r, results = "asis"}
-stargazer(lm_okun, lm_robust,  # put two times comapre normal and robust std error
+stargazer(lm_okun, lm_okun,  # put two times comapre normal and robust std error
           type = "latex",
-          se = list(NULL, rob_se))   # for the second insert my error
+          se = list(NULL, rob_se), # for the second insert my error
+          header=FALSE)   
 ```
 
 ##Plotting the results
@@ -108,13 +113,13 @@ ggplot(data=wholedta)+geom_point(mapping=aes(x=gdpchg, y=unemplchg, color=gdpchg
        y="Unemployment rate change",
        color="GDP change")+
   theme_classic()+
-  geom_smooth(method='lm',formula=y~x)
+  geom_smooth(mapping=aes(x=gdpchg, y=unemplchg),method='lm',formula = y ~ x)
 ```
 
 ##Conclusion 
 Our analysis suggests that the relationship bewteen the unemployment rate change and GDP growth rate for the US economy between 1990 and 1999 is negatively correlated. For 1% increase in the GDP growth, is correlated with a decrease of 4.8% unemployment rate change. Therefore Okuns law applies for the examined period. 
 
 ##References
-[1]Programming Pratices for Research in Economics
-[2]Wikipedia
-[3]Google in genral
+[1]Programming Pratices for Research in Economics\
+[2]Wikipedia\
+[3]Google in genral\
