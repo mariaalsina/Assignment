@@ -78,9 +78,10 @@ ggplot(data=wholedta)+geom_point(mapping=aes(x=gdpchg, y=unemplchg, color=gdpchg
 
 
 # Regression
-We proceed with the regression analysis. The goal is to obtain an estimate that tells the relationship between the two variables of interest from our dataset and compare it with the literature's Okuns law.
-In the regression framework of Okuns law, the unemployment gap is considered the dependent variable and the GDP growth the independent variable. We conduct the following OLS regression:
+We proceed with the regression analysis. The goal is to obtain an estimate that tells the relationship between the two variables of interest from our dataset and compare it with the literature's Okuns law.\
+In the regression framework of Okuns law, the unemployment rate change is considered the dependent variable and the GDP growth the independent variable. We conduct the following OLS regression:
 $$\Delta U_t=\alpha + \beta \Delta Y_t + \epsilon_t$$
+Table 3 presents the results of the OLS regression (Column 1) and the results obtained using robust etandard errors (Column 2):
 
 ```{r, echo=FALSE}
 lm_okun= lm(unemplchg ~ 1+ gdpchg, data=wholedta)
@@ -103,8 +104,10 @@ stargazer(lm_okun, lm_okun,  # put two times comapre normal and robust std error
           header=FALSE)   
 ```
 
-##Plotting the results
-In the following graph, we include the linear regression into our plot,
+
+
+## Plotting the results
+In the following graph, we include the linear regression into our plot:
 
 ```{r, echo=FALSE, warning=FALSE}
 ggplot(data=wholedta)+geom_point(mapping=aes(x=gdpchg, y=unemplchg, color=gdpchg))+
@@ -122,4 +125,4 @@ Our analysis suggests that the relationship bewteen the unemployment rate change
 ##References
 [1]Programming Pratices for Research in Economics\
 [2]Wikipedia\
-[3]Google in genral\
+[3]Google in general\
